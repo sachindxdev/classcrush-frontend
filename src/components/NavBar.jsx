@@ -32,8 +32,11 @@ const NavBar = () => {
   return (
     <div className="navbar bg-base-300 shadow-sm">
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost outline text-xl">
-          🗨️ Class Chat
+        <Link
+          to="/"
+          className="bg-gray-100 text-black text-xl font-bold py-2 px-2 rounded-xl m-2 cursor-pointer"
+        >
+          💕Class Crush
         </Link>
       </div>
       <div className="flex gap-2">

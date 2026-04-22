@@ -5,7 +5,8 @@ const Footer = () => {
     <footer className="footer sm:footer-horizontal bg-base-200 text-neutral-content items-center p-4">
       <aside className="grid-flow-col items-center">
         <p>
-          Copyright © {new Date().getFullYear()} Class Chat - All right reserved
+          Copyright © {new Date().getFullYear()} Class Crush - All right
+          reserved
         </p>
       </aside>
       <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
