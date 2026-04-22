@@ -34,7 +34,7 @@ const NavBar = () => {
       <div className="flex-1">
         <Link
           to="/"
-          className="bg-gray-100 text-black text-xl font-bold py-2 px-2 rounded-xl m-2 cursor-pointer"
+          className="bg-gray-100 text-black text-lg md:text-xl font-bold py-2 px-2 rounded-xl m-2 whitespace-nowrap"
         >
           💕Class Crush
         </Link>
