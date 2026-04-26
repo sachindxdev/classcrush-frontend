@@ -4,14 +4,14 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
   const getFeed = async () => {
     try {
@@ -22,7 +22,7 @@ const Feed = () => {
       dispatch(addFeed(res.data));
     } catch (err) {
       if (err.response?.status === 401) {
-        navigate("/login");
+        setNotLoggedIn(true);
       } else {
         console.error(err.message);
       }
@@ -32,11 +32,7 @@ const Feed = () => {
   };
 
   useEffect(() => {
-    if (!feed) {
-      getFeed();
-    } else {
-      setLoading(false);
-    }
+    getFeed();
   }, []);
 
   if (loading) {
@@ -44,6 +40,25 @@ const Feed = () => {
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
         <span className="loading loading-spinner loading-lg"></span>
         <p className="mt-4 text-gray-400">Finding your perfect matches...</p>
+      </div>
+    );
+  }
+
+  if (notLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+        <div className="text-5xl mb-4">🔐</div>
+
+        <h1 className="text-2xl font-bold mb-2">Unlock your connections</h1>
+
+        <p className="text-gray-400 max-w-sm mb-4">
+          Sign in to explore profiles, send requests, and discover your perfect
+          matches on ClassCrush 💕
+        </p>
+
+        <Link to="/login" className="btn btn-primary px-6">
+          Go to Login
+        </Link>
       </div>
     );
   }

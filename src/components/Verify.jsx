@@ -8,7 +8,6 @@ const Verify = () => {
   const navigate = useNavigate();
 
   const [status, setStatus] = useState("loading");
-
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -29,16 +28,20 @@ const Verify = () => {
         setStatus("success");
 
         setTimeout(() => {
-          navigate("/");
-        }, 2000);
+          navigate("/login");
+        }, 3000);
       } catch (err) {
         setStatus("error");
-        setMessage(err?.response?.data || "Verification failed. Link expired.");
+        setMessage(
+          err?.response?.data?.message ||
+            err?.response?.data ||
+            "Verification failed. Link expired.",
+        );
       }
     };
 
     verifyEmail();
-  }, []);
+  }, [params, navigate]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-base-200">
@@ -57,7 +60,7 @@ const Verify = () => {
             <>
               <div className="text-success text-5xl">✓</div>
               <h2 className="text-xl font-semibold mt-2">Email Verified!</h2>
-              <p>You are now logged in. Redirecting...</p>
+              <p className="text-gray-500">Redirecting to login...</p>
             </>
           )}
 
