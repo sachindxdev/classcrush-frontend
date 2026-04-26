@@ -23,11 +23,11 @@ const NavBar = () => {
     }
   };
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/login");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <div className="navbar bg-base-300 shadow-sm">
@@ -39,6 +39,7 @@ const NavBar = () => {
           💕Class Crush
         </Link>
       </div>
+
       <div className="flex gap-2">
         {user && (
           <div className="flex items-center gap-3 mx-5">

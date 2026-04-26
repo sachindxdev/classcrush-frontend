@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
@@ -12,6 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,45 +21,62 @@ const Login = () => {
     try {
       const res = await axios.post(
         BASE_URL + "/login",
-        {
-          email,
-          password,
-        },
+        { email, password },
         { withCredentials: true },
       );
+
       dispatch(addUser(res.data));
       navigate("/");
     } catch (err) {
       setError(err?.response?.data?.message || "Something went wrong");
+
+      setToast({
+        type: "error",
+        message: "Login failed",
+      });
+
+      setTimeout(() => setToast(null), 3000);
     }
   };
 
   const handleSignUp = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         BASE_URL + "/signup",
-        {
-          firstName,
-          lastName,
-          email,
-          password,
-        },
+        { firstName, lastName, email, password },
         { withCredentials: true },
       );
-      dispatch(addUser(res?.data?.data));
-      navigate("/profile");
+
+      setToast({
+        type: "success",
+        message: "Signup successful! Check your email.",
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+
+      setTimeout(() => setToast(null), 3000);
     } catch (err) {
       setError(err?.response?.data?.message || "Something went wrong");
+
+      setToast({
+        type: "error",
+        message: "Signup failed",
+      });
+
+      setTimeout(() => setToast(null), 3000);
     }
   };
 
   return (
     <div className="flex justify-center my-10">
-      <div className="card bg-base-300 w-96 shadow-sm ">
+      <div className="card bg-base-300 w-96 shadow-xl">
         <div className="card-body">
           <h2 className="card-title text-2xl justify-center">
             {isLoginForm ? "Login" : "Sign Up"}
           </h2>
+
           <div>
             {!isLoginForm && (
               <>
@@ -71,6 +89,7 @@ const Login = () => {
                     onChange={(e) => setFirstName(e.target.value)}
                   />
                 </fieldset>
+
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Last Name</legend>
                   <input
@@ -82,8 +101,9 @@ const Login = () => {
                 </fieldset>
               </>
             )}
+
             <fieldset className="fieldset">
-              <legend className="fieldset-legend">Email ID</legend>
+              <legend className="fieldset-legend">Email</legend>
               <input
                 type="email"
                 className="input"
@@ -91,6 +111,7 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </fieldset>
+
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Password</legend>
               <input
@@ -101,7 +122,9 @@ const Login = () => {
               />
             </fieldset>
           </div>
-          {error && <p className="text-red-400">ERROR: {error}</p>}
+
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+
           <div className="card-actions justify-center">
             <button
               className="btn btn-primary"
@@ -110,19 +133,32 @@ const Login = () => {
               {isLoginForm ? "Login" : "Sign Up"}
             </button>
           </div>
-          <h1
-            className="text-center p-2 cursor-pointer hover:text-amber-400"
+
+          <p
+            className="text-center mt-2 cursor-pointer hover:text-primary"
             onClick={() => {
-              setIsLoginForm((value) => !value);
+              setIsLoginForm(!isLoginForm);
               setError("");
             }}
           >
             {isLoginForm
               ? "Don't have an account? Sign Up"
               : "Already have an account? Login"}
-          </h1>
+          </p>
         </div>
       </div>
+
+      {toast && (
+        <div className="toast toast-top toast-center">
+          <div
+            className={`alert ${
+              toast.type === "success" ? "alert-success" : "alert-error"
+            }`}
+          >
+            <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
