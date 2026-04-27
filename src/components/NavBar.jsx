@@ -8,6 +8,7 @@ import { clearFeed } from "../utils/feedSlice";
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
+  const request = useSelector((state) => state.request);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,7 +64,10 @@ const NavBar = () => {
                 </li>
                 <li>
                   <Link to="/requests">
-                    Requests <span className="badge">Pending</span>
+                    Requests{" "}
+                    {request.length > 0 && (
+                      <span className="badge">Pending</span>
+                    )}
                   </Link>
                 </li>
                 <li>
