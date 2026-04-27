@@ -23,12 +23,6 @@ const NavBar = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!user) {
-  //     navigate("/login");
-  //   }
-  // }, [user, navigate]);
-
   return (
     <div className="navbar bg-base-300 shadow-sm">
       <div className="flex-1">
