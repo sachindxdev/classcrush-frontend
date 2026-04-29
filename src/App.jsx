@@ -13,6 +13,8 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import Chat from "./components/Chat";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/connections" element={<Connections />} />
               <Route path="/requests" element={<Requests />} />
+              <Route path="/chat/:targetUserId" element={<Chat />} />
               <Route path="/verify" element={<Verify />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -35,6 +38,7 @@ function App() {
                 path="/terms-and-conditions"
                 element={<TermsConditions />}
               />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>
