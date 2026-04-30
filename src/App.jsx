@@ -15,6 +15,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import Chat from "./components/Chat";
 import NotFound from "./pages/NotFound";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route path="/connections" element={<Connections />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/chat/:targetUserId" element={<Chat />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify" element={<Verify />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

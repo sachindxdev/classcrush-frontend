@@ -69,6 +69,11 @@ const Login = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    isLoginForm ? handleLogin() : handleSignUp();
+  };
+
   return (
     <div className="flex justify-center my-10">
       <div className="card bg-base-300 w-96 shadow-xl">
@@ -77,7 +82,7 @@ const Login = () => {
             {isLoginForm ? "Login" : "Sign Up"}
           </h2>
 
-          <div>
+          <form onSubmit={handleSubmit}>
             {!isLoginForm && (
               <>
                 <fieldset className="fieldset">
@@ -121,18 +126,15 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </fieldset>
-          </div>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm">{error}</p>}
 
-          <div className="card-actions justify-center">
-            <button
-              className="btn btn-primary"
-              onClick={isLoginForm ? handleLogin : handleSignUp}
-            >
-              {isLoginForm ? "Login" : "Sign Up"}
-            </button>
-          </div>
+            <div className="card-actions justify-center mt-4">
+              <button type="submit" className="btn btn-primary">
+                {isLoginForm ? "Login" : "Sign Up"}
+              </button>
+            </div>
+          </form>
 
           <p
             className="text-center mt-2 cursor-pointer hover:text-primary"
@@ -145,6 +147,15 @@ const Login = () => {
               ? "Don't have an account? Sign Up"
               : "Already have an account? Login"}
           </p>
+
+          {isLoginForm && (
+            <p
+              className="text-center mt-1 cursor-pointer text-sm hover:text-primary"
+              onClick={() => navigate("/reset-password")}
+            >
+              Forgot Password?
+            </p>
+          )}
         </div>
       </div>
 
