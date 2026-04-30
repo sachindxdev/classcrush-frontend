@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router";
+import { useParams, Navigate } from "react-router";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -8,10 +8,17 @@ import { BASE_URL } from "../utils/constants";
 const Chat = () => {
   const { targetUserId } = useParams();
 
+  const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(targetUserId);
+  if (!isValidObjectId) {
+    return <Navigate to="/connections" replace />;
+  }
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [targetUser, setTargetUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+
+  const [isAuthorized, setIsAuthorized] = useState(null);
 
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
@@ -31,46 +38,79 @@ const Chat = () => {
   };
 
   const fetchChatMessages = async () => {
-    const res = await axios.get(BASE_URL + "/chat/" + targetUserId, {
-      withCredentials: true,
-    });
+    try {
+      const connectionsRes = await axios.get(BASE_URL + "/user/connections", {
+        withCredentials: true,
+      });
 
-    const chatMessages = res.data.messages.map((msg) => ({
-      senderId: msg.senderId._id,
-      firstName: msg.senderId.firstName,
-      lastName: msg.senderId.lastName,
-      text: msg.text,
-      createdAt: msg.createdAt,
-    }));
+      const isConnected = connectionsRes.data.data.some(
+        (c) => c._id === targetUserId,
+      );
 
-    setMessages(chatMessages);
+      if (!isConnected) {
+        setIsAuthorized(false);
+        return;
+      }
 
-    const otherUser = res.data.participants.find((p) => p._id !== userId);
+      setIsAuthorized(true);
 
-    setTargetUser(otherUser);
+      const res = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+        withCredentials: true,
+      });
+
+      const chatMessages = res.data.messages.map((msg) => ({
+        senderId: msg.senderId._id,
+        firstName: msg.senderId.firstName,
+        lastName: msg.senderId.lastName,
+        text: msg.text,
+        createdAt: msg.createdAt,
+      }));
+
+      setMessages(chatMessages);
+
+      const otherUser = res.data.participants.find((p) => p._id !== userId);
+      setTargetUser(otherUser);
+    } catch (err) {
+      console.error(
+        "Chat load error:",
+        err?.response?.data?.message || err.message,
+      );
+      setIsAuthorized(false);
+    }
   };
 
   useEffect(() => {
     if (!userId) return;
-
     fetchChatMessages();
+  }, [userId, targetUserId]);
+
+  useEffect(() => {
+    if (!userId || !isAuthorized) return;
 
     const socket = createSocketConnection(userId);
     socketRef.current = socket;
 
     socket.emit("joinChat", { targetUserId });
 
-    socket.on("messageReceived", (msg) => {
+    const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
-    });
+    };
 
-    socket.on("onlineUsers", setOnlineUsers);
+    const handleOnlineUsers = (users) => {
+      setOnlineUsers(users);
+    };
+
+    socket.off("messageReceived");
+    socket.off("onlineUsers");
+
+    socket.on("messageReceived", handleMessage);
+    socket.on("onlineUsers", handleOnlineUsers);
 
     return () => {
-      socket.off("messageReceived");
-      socket.off("onlineUsers");
+      socket.off("messageReceived", handleMessage);
+      socket.off("onlineUsers", handleOnlineUsers);
     };
-  }, [userId, targetUserId]);
+  }, [userId, targetUserId, isAuthorized]);
 
   useEffect(() => {
     scrollToBottom();
@@ -78,6 +118,11 @@ const Chat = () => {
 
   const sendMessage = () => {
     if (!newMessage.trim()) return;
+
+    if (!socketRef.current?.connected) {
+      console.warn("Socket not connected, cannot send message");
+      return;
+    }
 
     socketRef.current.emit("sendMessage", {
       targetUserId,
@@ -88,6 +133,18 @@ const Chat = () => {
   };
 
   const isOnline = onlineUsers.includes(targetUserId);
+
+  if (isAuthorized === null) {
+    return (
+      <div className="w-full h-[85vh] flex justify-center items-center">
+        <p className="text-gray-400 text-sm">Loading chat...</p>
+      </div>
+    );
+  }
+
+  if (isAuthorized === false) {
+    return <Navigate to="/connections" replace />;
+  }
 
   return (
     <div className="w-full h-[85vh] flex justify-center items-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
