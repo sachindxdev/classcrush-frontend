@@ -16,6 +16,7 @@ import TermsConditions from "./pages/TermsConditions";
 import Chat from "./components/Chat";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./components/ResetPassword";
+import DeleteAccount from "./components/DeleteAccount";
 
 function App() {
   return (
@@ -32,6 +33,10 @@ function App() {
               <Route path="/chat/:targetUserId" element={<Chat />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify" element={<Verify />} />
+              <Route
+                path="/profile/verify/delete-account"
+                element={<DeleteAccount />}
+              />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
