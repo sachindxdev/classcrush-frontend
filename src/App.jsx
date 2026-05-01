@@ -17,6 +17,7 @@ import Chat from "./components/Chat";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./components/ResetPassword";
 import DeleteAccount from "./components/DeleteAccount";
+import ForgotPassword from "./components/ForgotPassword";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               <Route path="/connections" element={<Connections />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/chat/:targetUserId" element={<Chat />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify" element={<Verify />} />
               <Route

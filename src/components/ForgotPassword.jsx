@@ -1,32 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { useNavigate, useSearchParams } from "react-router";
 
-const ResetPassword = () => {
-  const [newPassword, setNewPassword] = useState("");
+const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-
-  const navigate = useNavigate();
-
-  const handleResetPassword = async () => {
-    if (!token) {
+  const handleSubmit = async () => {
+    if (!email) {
       setToast({
         type: "error",
-        message: "Invalid or missing reset token",
-      });
-      setTimeout(() => setToast(null), 3000);
-      return;
-    }
-
-    if (!newPassword) {
-      setToast({
-        type: "error",
-        message: "Please enter a new password",
+        message: "Please enter your email",
       });
       setTimeout(() => setToast(null), 3000);
       return;
@@ -35,23 +20,20 @@ const ResetPassword = () => {
     try {
       setLoading(true);
 
-      const res = await axios.patch(BASE_URL + "/user/reset-password", {
-        token,
-        newPassword,
+      const res = await axios.post(BASE_URL + "/user/forgot-password", {
+        email,
       });
 
       setToast({
         type: "success",
-        message: res.data.message || "Password reset successful",
+        message: res.data.message || "Reset link sent to email",
       });
 
-      setNewPassword("");
-
-      setTimeout(() => navigate("/login"), 2000);
+      setEmail("");
     } catch (err) {
       setToast({
         type: "error",
-        message: err?.response?.data?.message || "Reset failed. Try again.",
+        message: err?.response?.data?.message || "Failed to send reset link",
       });
     } finally {
       setLoading(false);
@@ -63,22 +45,22 @@ const ResetPassword = () => {
     <div className="flex justify-center my-10">
       <div className="card bg-base-300 w-96 shadow-xl">
         <div className="card-body">
-          <h2 className="text-xl text-center font-semibold">Reset Password</h2>
+          <h2 className="text-xl text-center font-semibold">Forgot Password</h2>
 
           <input
-            type="password"
-            placeholder="Enter new password"
+            type="email"
+            placeholder="Enter your email"
             className="input mt-4"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <button
             className="btn btn-primary mt-4"
-            onClick={handleResetPassword}
+            onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Resetting..." : "Reset Password"}
+            {loading ? "Sending..." : "Send Reset Link"}
           </button>
         </div>
       </div>
@@ -98,4 +80,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;

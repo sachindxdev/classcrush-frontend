@@ -151,7 +151,7 @@ const Login = () => {
           {isLoginForm && (
             <p
               className="text-center mt-1 cursor-pointer text-sm hover:text-primary"
-              onClick={() => navigate("/reset-password")}
+              onClick={() => navigate("/forgot-password")}
             >
               Forgot Password?
             </p>
