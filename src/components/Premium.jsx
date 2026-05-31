@@ -14,7 +14,9 @@ const Premium = () => {
       withCredentials: true,
     });
 
-    setIsUserPremium(res.data.isPremium);
+    if (res.data.isPremium) {
+      setIsUserPremium(true);
+    }
   };
 
   const handleBuyClick = async (type) => {
